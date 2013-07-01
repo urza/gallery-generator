@@ -23,6 +23,8 @@ namespace static_photo_gallery_generator
             else
                 dir = Environment.CurrentDirectory;
 
+            dir = @"z:\Quercus-Uloziste\TMP\domrep09\";
+
             generateAlbums(dir);
 
         }
@@ -83,13 +85,27 @@ namespace static_photo_gallery_generator
 
         static void createThumbnailImage(string imagePath, double desiredHeight, string thumbPath)
         {
-            Image imgOriginal = Bitmap.FromFile(imagePath);
-            double width = (imgOriginal.Width * desiredHeight) / imgOriginal.Height;
-            Image imgnew = new Bitmap((int)width, (int)desiredHeight, PixelFormat.Format32bppArgb);
-            Graphics g = Graphics.FromImage(imgnew);
-            g.DrawImage(imgOriginal, new Point[] { new Point(0, 0), new Point((int)width, 0), new Point(0, (int)desiredHeight) }, new Rectangle(0, 0, imgOriginal.Width, imgOriginal.Height), GraphicsUnit.Pixel);
+            Image imgOriginal = null;
+            Image imgnew = null;
 
-            imgnew.Save(thumbPath);
+            try
+            {
+                imgOriginal = Bitmap.FromFile(imagePath);
+                double width = (imgOriginal.Width * desiredHeight) / imgOriginal.Height;
+                imgnew = new Bitmap((int)width, (int)desiredHeight, PixelFormat.Format32bppArgb);
+                Graphics g = Graphics.FromImage(imgnew);
+                g.DrawImage(imgOriginal, new Point[] { new Point(0, 0), new Point((int)width, 0), new Point(0, (int)desiredHeight) },
+                    new Rectangle(0, 0, imgOriginal.Width, imgOriginal.Height), GraphicsUnit.Pixel);
+
+                imgnew.Save(thumbPath);
+            }
+            finally
+            {
+                imgOriginal.Dispose();
+                imgnew.Dispose();
+            }
+
+
         }
 
 
