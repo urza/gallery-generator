@@ -23,8 +23,6 @@ namespace static_photo_gallery_generator
             else
                 dir = Environment.CurrentDirectory;
 
-            dir = @"z:\Quercus-Uloziste\TMP\domrep09\";
-
             generateAlbums(dir);
 
         }
