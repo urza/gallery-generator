@@ -1,0 +1,119 @@
+html{
+    height: 100%; width: 100%;
+}
+body {
+    height: 100%; width: 100%;
+    background-color: #000;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Verdana, Arial, Sans-Serif;
+    color: #ececec;
+}
+
+a {
+    color: #1170a9;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0d527b;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-size: 1.4em;
+}
+
+h3 {
+    font-size: 1.1em;
+}
+
+p {
+    padding: 10px 0;
+    margin: 0;
+}
+
+dl {
+    margin: 0;
+}  
+  
+    dt {
+        font-weight: bold;
+    }
+
+    dt:after {
+        content: ":";
+    }
+
+    dd {
+        margin-left: 5px;
+        font-size: .85em;
+        margin-bottom: 5px;
+    }
+    
+/* ------------ layout elements -------------*/
+
+#page
+{
+    margin: 0; padding: 0;
+}
+
+#menucontainer
+{
+    display: none;
+    color: #eaeaea;
+    position: absolute; 
+    right: 0px; /* 20 */
+    top: 0px;
+}
+
+
+#main
+{
+    /*position: absolute; top: 30px; right: 10px; bottom: 30px; left: 10px;*/
+    position: absolute; top: 30px; right: 10px; bottom: 30px; left: 10px;
+    text-align: center;
+    
+    vertical-align:middle;
+}
+
+#mainpicture img 
+{
+   margin: auto;
+   background: #f95b34; max-height: 100%; max-width: 100%; 
+   border-color: White; border-width 20px; border-style:solid; /* border with = 20px */
+   text-align: center;
+   vertical-align:middle;
+}
+
+#caption
+{
+    padding: 0px;
+    background-color: rgba(0,0,0,0.3);
+}
+
+#prev
+{
+    position: absolute;
+    top: 50%; left: 5px;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#next
+{
+     position: absolute;
+    top: 50%; right: 5px;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+

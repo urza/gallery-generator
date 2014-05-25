@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<link href="./assets/ShowPicture.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="css/panorama360.css" media="all" />
+	<script src='./assets/modernizr.min.js'></script>
+
+	<script src="./assets/jquery.min.js"></script>
+	<script src="./assets/jquery.removeWhitespace.js"></script>
+	<script src="./assets/jquery.collageCaption.js"></script>
+	<script src='./assets/jquery-scrollable.js'></script>
+	<script src="./assets/jquery.mousewheel.min.js" type="text/javascript"></script>
+	<script src="./assets/jquery.panorama360.js" type="text/javascript"></script>
+	
+	<script type="text/javascript">
+		//get parameters from url, ie ShowPicture.html?file=L101507.JPG
+		//var f = (get('file'));
+		function getParameterFromURL(name){
+		  if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+			return decodeURIComponent(name[1]);
+		}
+
+		///vrati fotku-objekt z pole "fotke" podle nazvu fotky
+		function getFotkae(fileName)
+		{
+			var matches = jQuery.grep(fotkae, function(n,i) { //toto vybere aktualni fotky z pole definovaneho nahore, je to neco jako WHERE, takze jich muze byt vic
+			    return(n.file.toLowerCase() === fileName.toLowerCase()); //podle property .file a hodnoty imgSrc aktualniho obrazku
+			});
+			if (matches.length) { 
+				return matches[0];
+			}
+			else{
+				console.log("can't find fotkae " + fileName);
+				return null;
+			}
+		}
+
+		function decidePanorama(photoObject)
+		{
+			if (photoObject.panorama)
+			{
+				console.log("decidePanorama true");
+				console.log(photoObject);
+				$('#mainpicture').hide();
+				$('.panorama').show();
+				$('#panoImg').attr('src',photoObject.file);
+				$('#panoImg').attr('data-width',photoObject.width);
+				$('#panoImg').attr('data-height',photoObject.height);
+				$('.panorama-view').panorama360({is360: false, sliding_direction: 1});
+				$(window).trigger('resize');
+
+			} else {
+				console.log("decidePanorama false");
+				$('.panorama').hide();
+				$('#mainpicture').show();
+			}
+		}
+
+	</script>
+
+	<script type="text/javascript">
+	///tady nasazime fotky.. bohuzel to nemuze byt v externich souborech nejak pekne, protoze to by nefungovalo lokalne (chrome odmita nacitat jine sobory byt referencovane pres file:// (firefox a ie to pry umi))
+
+	###fotkae
+
+	</script>
+
+	<script type="text/javascript">
+		var currImgSrc;
+		var currPhotoObject;
+
+		var nextImgSrc; //ie "/img/album/next.jpg"
+		var nextImgHref; //ie "/album/next.jpg"
+		var nextName;   //ie "next.jpg"
+		var nextCaption; //ie "very nice image"
+		var cacheNextImage;
+
+		var prevImgSrc; 
+		var prevImgHref; 
+		var prevName;  
+		var prevCaption;
+		var cachePrevImage;
+
+		$(function () {
+
+			currImgSrc = getParameterFromURL('file');
+			$('#photo').attr('src', currImgSrc);
+
+			currPhotoObject = getFotkae(currImgSrc);
+			$('#caption').html(currPhotoObject.caption);
+
+			decidePanorama(currPhotoObject);
+
+			///PRELOADING IMAGES
+			///PRELOAD NEXT
+			$('#next').click(function(event) {
+				//prevent normal request for next page.. we will to the ajax swapping trick
+				event.preventDefault();
+				 
+				 //content
+				$('#photo').attr('src', cacheNextImage.src);
+				$('#caption').html(nextCaption);
+				
+				//change url
+				//if (Modernizr.history){ //if we are in modern browser and can change the url, we do it
+				//	window.history.pushState("data", "title" , nextImgHref  );
+				//	} else { //for the rest we use the hash hack
+					 location.search = "?file="+nextImgSrc;
+				//	}
+				currImgSrc = nextImgSrc;
+				//preload the next image
+				var matches = jQuery.grep(fotkae, function(n,i) { //toto vybere aktualni fotky z pole definovaneho nahore, je to neco jako WHERE, takze jich muze byt vic
+				    return(n.file.toLowerCase() === currImgSrc.toLowerCase()); //podle property .file a hodnoty imgSrc aktualniho obrazku
+				});
+				if (matches.length) { //pokud se neco naslo
+					console.log(matches);
+				    var p = matches[0]; //tak vem to prvni (tj current photo)
+
+				    decidePanorama(p);
+				    
+				    cachePrevImage.src = p.file;
+				    prevImgSrc = $('#photo').attr('src');
+				    prevCaption = $('#caption').html();
+
+				    cacheNextImage.src = p.nextImage;
+				    nextImgSrc = p.nextImage;
+				    nextCaption = p.nCaption;
+				}
+
+			});
+			///END PRELOAD NEXT
+
+			///PRELOAD PREV
+			 $('#prev').click(function(event) {
+				//prevent normal request for prev page.. we will to the ajax swapping trick
+				event.preventDefault();
+				
+				//content
+				$('#photo').attr('src', cachePrevImage.src);
+				$('#caption').html(prevCaption);
+				
+				location.search = "?file="+prevImgSrc;
+				
+				//preload the prev image
+				currImgSrc = prevImgSrc;
+				//preload the next image
+				var matches = jQuery.grep(fotkae, function(n,i) { //toto vybere aktualni fotky z pole definovaneho nahore, je to neco jako WHERE, takze jich muze byt vic
+				    return(n.file.toLowerCase() === currImgSrc.toLowerCase()); //podle property .file a hodnoty imgSrc aktualniho obrazku
+				});
+				if (matches.length) { //pokud se neco naslo
+					console.log(matches);
+				    var p = matches[0]; //tak vem to prvni (tj current photo)
+				    
+				    decidePanorama(p);
+
+				    cacheNextImage.src = p.file;
+				    nextImgSrc = $('#photo').attr('src');
+				    nextCaption = $('#caption').html();
+
+				    cachePrevImage.src = p.prevImage;
+				    prevImgSrc = p.prevImage;
+				    prevCaption = p.pCaption;
+				}
+
+			});
+			///END PRELOAD PREV
+			/// END PRELOADING IMAGES
+
+		});   ///end of jquery document ready
+		
+		
+		/// preload the first next+prev image after the page (current image) is loaded
+		$(window).load(function(){  
+
+			  cacheNextImage = document.createElement('img');
+			  cachePrevImage = document.createElement('img');
+			  	
+				//window.alert(fotkae.length);
+				//var cesta = window.location.href;
+				//var base = cesta.substring(0, cesta.lastIndexOf('/'));
+				//var currJsonData = base+'/data/'+currImgSrc.slice(0, -4)+'.json' //x.slice(0, -4) odstrani priponu ".jpg"
+
+			  //preload the first next and prev images
+			  var matches = jQuery.grep(fotkae, function(n,i) { //toto vybere aktualni fotky z pole definovaneho nahore, je to neco jako WHERE, takze jich muze byt vic
+				    return(n.file.toLowerCase() === currImgSrc.toLowerCase()); //podle property .file a hodnoty imgSrc aktualniho obrazku
+				});
+
+				if (matches.length) { //pokud se neco naslo
+				    var p = matches[0]; //tak vem to prvni (tj. current photo)
+				    console.log(p);
+				    
+				    //preload next
+				    cacheNextImage.src = p.nextImage;
+				    nextImgSrc = p.nextImage;
+				    nextCaption = p.nCaption;
+
+				    //preload prev
+				    cachePrevImage.src = p.prevImage;
+				    prevImgSrc = p.prevImage;
+				    prevCaption = p.pCaption;
+				}
+		});  
+		</script>
+
+</head>
+
+<body>
+	<div id="page">
+		<div id="main">
+			<div class="panorama">
+  				<div class="panorama-view">
+    				<div class="panorama-container">
+      					<img id="panoImg" src="http://upload.wikimedia.org/wikipedia/commons/1/15/View_from_Sky_Tower_Akl.jpg" data-width="1922" data-height="500" alt="Panorama" />
+    				</div>
+  				</div>
+			</div>
+			<div id="navbuttons">
+				<div id="next"><a href="">next</a></div>
+				<div id="prev"><a href="">prev</a></div>
+			</div>
+			<div id="mainpicture">
+				<img id="photo" src="./assets/loading.gif"/>
+			</div>
+			<div id="caption">
+			   some caption
+			</div>
+		</div>
+   </div>
+
+
+</body>
+</html>
+
+
