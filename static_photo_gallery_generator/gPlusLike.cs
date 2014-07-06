@@ -63,7 +63,11 @@ namespace static_photo_gallery_generator
             ///index.html
             //Console.WriteLine("Writing index for " + album_dir.Name);
             var index_content = File.ReadAllText(t_index);
-            File.WriteAllText(Path.Combine(album_path,"index.html"), index_content.Replace("###pictures", ContentForIndex()));
+            File.WriteAllText(Path.Combine(album_path,"index.html"), 
+                index_content.Replace("###pictures", ContentForIndex())
+                             .Replace("###AlbumTitle", album_dir.Name)
+                             .Replace("###facebookThumnail", photos.First().Name)
+                );
 
             ///ShowPicture.html
             //Console.WriteLine("Writing ShowPicture.....");

@@ -1,0 +1,6 @@
+gallery todo
+
+
+album udelat jako imgs ktere odkazuji na samotny soubor fotku - tak to bude fungovat i lidem bez js
+potom collagePlus z toho udela pekne album
+TODO javascriptem nahradit odkazy z odkazy na fotky na ShowPicture.html?file=filename.jpg
